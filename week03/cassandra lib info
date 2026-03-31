@@ -1,0 +1,45 @@
+cqlsh> CREATE KEYSPACE library_419
+   ... WITH replication = {
+   ...      'class': 'SimpleStrategy',
+   ...     'replication_factor': 1
+   ... };
+cqlsh> USE library_419;
+
+cqlsh:library_419> CREATE TABLE Library_Info (
+               ...     Stud_Id int,
+               ...     Book_Id int,
+               ...     Stud_Name text,
+               ...     Book_Name text,
+               ...     Date_Issue date,
+               ...     PRIMARY KEY (Stud_Id, Book_Id)
+               ... );
+
+cqlsh:library_419> CREATE TABLE Library_Counter (
+               ...     Stud_Id int,
+               ...     Book_Id int,
+               ...     Counter_Value counter,
+               ...     PRIMARY KEY (Stud_Id, Book_Id)
+               ... );
+
+cqlsh:library_419> BEGIN BATCH
+               ... INSERT INTO Library_Info (Stud_Id, Book_Id, Stud_Name, Book_Name, Date_Issue)
+               ... VALUES (101, 1, 'Rahul', 'DBMS', '2026-02-20');
+
+               ... INSERT INTO Library_Info (Stud_Id, Book_Id, Stud_Name, Book_Name, Date_Issue)
+               ... VALUES (112, 2, 'Ankit', 'BDA', '2026-02-21');
+
+               ... INSERT INTO Library_Info (Stud_Id, Book_Id, Stud_Name, Book_Name, Date_Issue)
+               ... VALUES (112, 3, 'Ankit', 'ML', '2026-02-22');
+               ... APPLY BATCH;
+
+cqlsh:library_419> COPY Library_Info TO '/home/bmscecse/library_info.csv' WITH HEADER = TRUE;
+
+cqlsh:library_419> COPY Library_Counter TO '/home/bmscecse/library_counter.csv' WITH HEADER = TRUE;
+
+cqlsh:library_419> COPY Library_Info (Stud_Id, Book_Id, Book_Name, Date_Issue, Stud_Name)
+               ... FROM '/home/bmscecse/library_info.csv'
+               ... WITH HEADER = TRUE;
+
+cqlsh:library_419> COPY Library_Counter (Stud_Id, Book_Id, Counter_Value)
+               ... FROM '/home/bmscecse/library_counter.csv'
+               ... WITH HEADER = TRUE;
